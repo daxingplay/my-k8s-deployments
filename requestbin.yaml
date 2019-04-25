@@ -1,3 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: requestbin
+  labels:
+    app: requestbin
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: requestbin
+---
+# deployment
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
@@ -20,3 +37,20 @@ spec:
         env:
         - name: REDIS_URL
           value: redis://81471092c56111e4.m.cnhza.kvstore.aliyuncs.com:6379/4
+---
+# Ingress
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: requestbin
+  labels:
+    app: requestbin
+spec:
+  rules:
+    - host: requestbin.ojpal.net
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: requestbin
+              servicePort: http
