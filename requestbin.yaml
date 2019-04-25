@@ -19,4 +19,4 @@ spec:
         - containerPort: 80
         env:
         - name: REDIS_URL
-        - value: redis://81471092c56111e4.m.cnhza.kvstore.aliyuncs.com:6379/4
+          value: redis://81471092c56111e4.m.cnhza.kvstore.aliyuncs.com:6379/4
