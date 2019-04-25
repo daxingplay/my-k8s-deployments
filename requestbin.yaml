@@ -32,8 +32,23 @@ spec:
       containers:
       - name: requestbin
         image: crccheck/requestbin:latest
+        imagePullPolicy: Always
         ports:
-        - containerPort: 80
+        - name: http
+          containerPort: 80
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 2
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 2
         env:
         - name: REDIS_URL
           value: redis://81471092c56111e4.m.cnhza.kvstore.aliyuncs.com:6379/4
@@ -45,7 +60,15 @@ metadata:
   name: requestbin
   labels:
     app: requestbin
+  annotations:
+    kubernetes.io/ingress.class: "nginx"    
+    certmanager.k8s.io/issuer: "letsencrypt-prod"
+    certmanager.k8s.io/acme-challenge-type: http01
 spec:
+  tls:
+  - hosts:
+    - requestbin.ojpal.net
+    secretName: requestbin-tls
   rules:
     - host: requestbin.ojpal.net
       http:
